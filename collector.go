@@ -12,7 +12,11 @@ import (
 	"k8s.io/client-go/dynamic"
 )
 
-type ClusterState = map[string]unstructured.UnstructuredList
+// Collector represents the state of a kubernetes system accessed through config
+type Collector struct {
+	state  map[schema.GroupVersionResource]unstructured.UnstructuredList
+	config *rest.Config
+}
 
 // GetState returns the state `ClusterState` of all the resources instantiated
 // in the kubernetes cluster accessible using `disClient` and `dynClient`.

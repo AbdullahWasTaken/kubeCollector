@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"
@@ -64,7 +65,7 @@ func (c *Collector) Collect(outDir string) {
 					log.Error(err)
 				} else {
 					// write JSON to file
-					sp := filepath.Join(jsonPath, gvr.Resource+".json")
+					sp := filepath.Join(jsonPath, gvr.Resource+"_"+strings.ReplaceAll(gvr.Group, ".", "-")+"_"+gvr.Version+".json")
 					fp, err := os.OpenFile(sp, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 					// err = os.WriteFile(f, jsonStr, fs.FileMode(os.O_CREATE|os.O_APPEND))
 					if err != nil {

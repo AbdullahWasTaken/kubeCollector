@@ -15,33 +15,21 @@ import (
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-// Collector represents a kubernetes system accessible through config
-type Collector struct {
-	config *rest.Config
-}
-
-// NewCollector creates a new Collector instance
-// and build the config object from kubeconfig path.
-func NewCollector(kubeconfig string) *Collector {
-	conf, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+// Collect queries the Kubernetes API server for the states of all available resources
+// and saves them individually in a subdirectory called JSON under `outDir`.
+func Collect(kubeconfig, outDir string) {
+	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &Collector{config: conf}
-}
-
-// Collect queries the Kubernetes API server for the states of all available resources
-// and saves them individually in a subdirectory called JSON under `outDir`.
-func (c *Collector) Collect(outDir string) {
-	dc, err := dynamic.NewForConfig(c.config)
+	dc, err := dynamic.NewForConfig(config)
 	if err != nil {
 		log.Error(err)
 	}
-	tc, err := kubernetes.NewForConfig(c.config)
+	tc, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		log.Error(err)
 	}
